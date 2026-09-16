@@ -1,0 +1,66 @@
+pragma cashscript ^0.13.0;
+
+// Human-readable specification of the Guanaco V1 pool covenant.
+//
+// Guanaco's production covenant is emitted as optimized Bitcoin Cash Script.
+// This CashScript contract documents the same consensus rules, but its compiled
+// bytecode is not the production redeem script and must not be used to derive a
+// production pool address.
+//
+// Constructor parameters:
+// - withdrawalPkh: HASH160 of the pool creator's withdrawal public key.
+// - feeNumerator / feeDenominator: one of the supported V1 fee fractions.
+contract GuanacoV1(
+    bytes20 withdrawalPkh,
+    int feeNumerator,
+    int feeDenominator
+) {
+    // Allows the pool creator to withdraw the reserves by proving ownership of
+    // the public key whose HASH160 was committed when the pool was created.
+    function withdraw(pubkey publicKey, sig signature) {
+        require(hash160(publicKey) == withdrawalPkh);
+        require(checkSig(signature, publicKey));
+    }
+
+    // Recreates the pool while enforcing its token category, covenant identity,
+    // selected fee tier, buyback-and-burn allocation, and constant-product
+    // invariant.
+    function trade() {
+        int poolIndex = this.activeInputIndex;
+
+        // Allocation outputs are placed in reverse input order at the end of the
+        // transaction, so every pool input maps to exactly one allocation output.
+        int allocationIndex = tx.outputs.length - 1 - poolIndex;
+
+        require(tx.version == 2);
+
+        // The successor pool must preserve both the token category and this
+        // covenant at the same transaction index.
+        require(tx.outputs[poolIndex].tokenCategory == tx.inputs[poolIndex].tokenCategory);
+        require(tx.outputs[poolIndex].lockingBytecode == tx.inputs[poolIndex].lockingBytecode);
+
+        // The absolute BCH reserve delta is the trade amount used to calculate
+        // the selected pool fee.
+        int totalFee = abs(tx.inputs[poolIndex].value - tx.outputs[poolIndex].value)
+            * feeNumerator / feeDenominator;
+
+        // Ten percent of the fee is allocated to GUA buybacks and permanent
+        // burns. A larger output remains valid, for example when relay policy
+        // requires a dust-sized output.
+        int nominalBuybackBurnAllocation = totalFee / 10;
+        require(tx.outputs[allocationIndex].value >= nominalBuybackBurnAllocation);
+        require(
+            tx.outputs[allocationIndex].lockingBytecode
+                == 0x76a914748e3dffdc1ab726e8d7d8d381e56034871fe62388ac
+        );
+
+        // The remaining ninety percent is retained by liquidity providers. The
+        // adjusted successor reserves may not reduce the constant product.
+        int lpFee = totalFee - nominalBuybackBurnAllocation;
+        int kBefore = tx.inputs[poolIndex].value * tx.inputs[poolIndex].tokenAmount;
+        int kAfter = (tx.outputs[poolIndex].value - lpFee)
+            * tx.outputs[poolIndex].tokenAmount;
+
+        require(kAfter >= kBefore);
+    }
+}
