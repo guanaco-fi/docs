@@ -5,7 +5,9 @@ contracts used by [guanaco.fi](https://guanaco.fi).
 
 ## Guanaco V1
 
-[`GuanacoV1.cash`](GuanacoV1.cash) documents the current Guanaco pool covenant.
+[`GuanacoV1.cash`](GuanacoV1.cash) documents the current Guanaco pool covenant
+in high-level CashScript. [`GuanacoV1-CashAssembly.md`](GuanacoV1-CashAssembly.md)
+documents the optimized CashAssembly emitted by the production V1 builder.
 V1 supports four fee tiers:
 
 | Level | Fee | Numerator | Denominator |
