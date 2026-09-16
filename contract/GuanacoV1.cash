@@ -44,11 +44,16 @@ contract GuanacoV1(
         int totalFee = abs(tx.inputs[poolIndex].value - tx.outputs[poolIndex].value)
             * feeNumerator / feeDenominator;
 
-        // Ten percent of the fee is allocated to GUA buybacks and permanent
-        // burns. A larger output remains valid, for example when relay policy
-        // requires a dust-sized output.
+        // Ten percent of the fee is sent to the fixed Guanaco V1 buyback-and-
+        // burn treasury. These funds are reserved for periodic open-market GUA
+        // purchases followed by permanent token burns, performed separately
+        // from the swap. A larger output remains valid, for example when relay
+        // policy requires a dust-sized output.
         int nominalBuybackBurnAllocation = totalFee / 10;
         require(tx.outputs[allocationIndex].value >= nominalBuybackBurnAllocation);
+
+        // P2PKH for:
+        // bitcoincash:qp6gu00lmsdtwfhg6lvd8q09vq6gw8lxyvgnr3603l
         require(
             tx.outputs[allocationIndex].lockingBytecode
                 == 0x76a914748e3dffdc1ab726e8d7d8d381e56034871fe62388ac

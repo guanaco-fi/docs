@@ -11,6 +11,8 @@ tying it to a particular pool:
 - `<feeCalculation>` is replaced by the selected V1 fee-tier fragment.
 - `<allocationP2pkh>` is the fixed V1 buyback-and-burn P2PKH locking bytecode:
   `76a914748e3dffdc1ab726e8d7d8d381e56034871fe62388ac`.
+  It pays
+  [`bitcoincash:qp6gu00lmsdtwfhg6lvd8q09vq6gw8lxyvgnr3603l`](https://explorer.selene.cash/address/bitcoincash:qp6gu00lmsdtwfhg6lvd8q09vq6gw8lxyvgnr3603l).
 
 Opcode names follow Bitcoin Cash VM terminology. Integer literals are encoded
 using their minimal Script-number representation.
@@ -143,6 +145,12 @@ invariant.
 The covenant enforces the nominal allocation as a minimum. Any additional BCH
 needed to keep the allocation output relayable is transaction-building policy,
 not part of the V1 consensus calculation.
+
+The destination accumulates BCH reserved for periodic open-market GUA purchases
+and permanent token burns. Those operations happen separately from the swap.
+V1 guarantees the amount and destination of each allocation, but it does not
+execute or verify the subsequent purchase and burn. More information about GUA
+is available at [guanaco.fi/gua](https://guanaco.fi/gua).
 
 ## Version identity
 

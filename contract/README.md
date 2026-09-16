@@ -29,6 +29,30 @@ For each trade, the covenant:
 The withdrawal path remains controlled by the public-key hash committed when
 the pool was created.
 
+## Buyback-and-burn allocation
+
+Every Guanaco V1 trade assigns 10% of the selected pool fee to the fixed V1
+buyback-and-burn treasury:
+
+- **Address:**
+  [`bitcoincash:qp6gu00lmsdtwfhg6lvd8q09vq6gw8lxyvgnr3603l`](https://explorer.selene.cash/address/bitcoincash:qp6gu00lmsdtwfhg6lvd8q09vq6gw8lxyvgnr3603l)
+- **Public-key hash:** `748e3dffdc1ab726e8d7d8d381e56034871fe623`
+- **P2PKH locking bytecode:**
+  `76a914748e3dffdc1ab726e8d7d8d381e56034871fe62388ac`
+
+This allocation funds periodic open-market purchases of GUA followed by
+permanent token burns. Buybacks and burns are performed separately from each
+swap; the allocation output does not represent an immediate purchase or burn.
+Permanent burns reduce the maximum possible supply of GUA, whose original
+fixed maximum supply is 1,000,000 GUA. See the public
+[GUA overview](https://guanaco.fi/gua) for the token identity, supply, and
+protocol-utility information.
+
+The V1 covenant enforces two facts about the allocation output: its BCH value
+must be at least 10% of the pool fee, and its locking bytecode must be the fixed
+P2PKH bytecode above. The covenant does not itself execute or cryptographically
+verify the later market purchase and token burn.
+
 ## Specification status
 
 The production V1 covenant is emitted directly as optimized Bitcoin Cash
