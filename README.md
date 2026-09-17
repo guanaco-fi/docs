@@ -7,3 +7,7 @@ decentralized exchange built on Bitcoin Cash.
 
 The human-readable CashScript specification of the current pool covenant is
 available in [`contract/`](contract/).
+
+## Releases
+
+Public release notes are available in [`releases/`](releases/).
