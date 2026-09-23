@@ -1,5 +1,6 @@
 # Guanaco release notes
 
+- [Guanaco 1.0.13](1.0.13.md) — September 23, 2026
 - [Guanaco 1.0.12](1.0.12.md) — September 23, 2026
 - [Guanaco 1.0.11](1.0.11.md) — September 23, 2026
 - [Guanaco 1.0.10](1.0.10.md) — September 23, 2026
